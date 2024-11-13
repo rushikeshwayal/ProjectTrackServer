@@ -1,9 +1,10 @@
 from flask import Flask, jsonify, request, abort
 from models import db, User, SessionLocal, init_db
+import os
 
 # Initialize Flask app and configure SQLAlchemy
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://default:m8fGg2pOqADn@ep-curly-wildflower-a42kf29p.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('connection_string')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 

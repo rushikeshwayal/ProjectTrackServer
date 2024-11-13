@@ -13,7 +13,7 @@ db = SQLAlchemy()
 # Define the SQLAlchemy engine using environment variables
 
 
-connection_string = f"postgresql+psycopg2://default:m8fGg2pOqADn@ep-curly-wildflower-a42kf29p.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require"
+connection_string = os.getenv('connection_string')
 engine = create_engine(connection_string)
 
 # Create a sessionmaker instance for direct access
@@ -29,6 +29,26 @@ class User(Base):
     email = Column(String(50), unique=True)
     password = Column(String(50))
     access = Column(String(50))  # Corrected column name
+
+user1 = User(username='user',email='user@gmail.com',password='userPassword',access='Investigator')
+user2 = User(username='admin',email='admin@gmail.com',password='adminPassword',access='Admin')
+
+session = SessionLocal()
+try:
+    # Add users to session
+    session.add(user1)
+    session.add(user2)
+    
+    # Commit the changes to save them in the database
+    session.commit()
+    print("Users added successfully!")
+except Exception as e:
+    # Rollback in case of error
+    session.rollback()
+    print("Error adding users:", e)
+finally:
+    # Close the session
+    session.close()
 
 
 # Initialize database and create tables
