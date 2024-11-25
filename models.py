@@ -39,16 +39,16 @@ try:
     session.add(user1)
     session.add(user2)
     
-    # Commit the changes to save them in the database
-    session.commit()
+    session.commit()   # Commit the transactions
+
     print("Users added successfully!")
 except Exception as e:
-    # Rollback in case of error
     session.rollback()
     print("Error adding users:", e)
 finally:
-    # Close the session
     session.close()
+
+
 
 
 # Initialize database and create tables
