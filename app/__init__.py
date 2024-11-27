@@ -3,6 +3,7 @@ from app.extensions import db
 from app.config import Config
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 def create_app():
