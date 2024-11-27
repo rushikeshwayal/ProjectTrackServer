@@ -14,7 +14,7 @@ def create_app():
     db.init_app(app)
 
     # Import models to register them with SQLAlchemy
-    from app.models import Admin
+    from app.models import Admin , Investigator
 
     # Create database tables if they don't exist
     with app.app_context():
@@ -22,7 +22,10 @@ def create_app():
 
 def register_blueprints(app):
     from app.routes.admin import admin_bp
+    from app.routes.investigator import investigator_bp
+    from app.routes.agency import agency_bp
     app.register_blueprint(admin_bp, url_prefix='/api')  # Example: prefix routes with /api
-
+    app.register_blueprint(investigator_bp, url_prefix='/api')  # Example: prefix routes with /api
+    app.register_blueprint(agency_bp, url_prefix='/api')  # Example: prefix routes with /api
 
     return app
