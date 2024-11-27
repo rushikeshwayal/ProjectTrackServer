@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from app.models import db, Admin
+from app.models import db, Admin , Investigator
 
 admin_bp = Blueprint('admin', __name__)
 @admin_bp.route('/test', methods=['GET'])
