@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date ,Text ,Time, Float
+from sqlalchemy import Column, Integer, String, Date ,Text ,Time, Float ,ForeignKey
 from app.extensions import db
 
 # class User(db.Model):
@@ -136,3 +136,30 @@ class ProjectCoordinator(db.Model):
 #     budget_head = Column(String(100), nullable=False)  # Budget Head
 #     submission_date = Column(Date, nullable=False)  # Submission Date
 #     utilized_amount = Column(Float, nullable=False)  # Utilized Amount
+class ProjectFund(db.Model):
+    _tablename_ = 'project_fund'
+
+    project_fund_id = Column(Integer, primary_key=True, autoincrement=True)  # Primary Key
+    fund_amount = Column(Float, nullable=False)  # Fund Amount
+    fund_releasing_authority = Column(String(255), nullable=False)  # Fund Releasing Authority
+    project_phase = Column(String(100), nullable=False)  # Project Phase
+    fund_release_date = Column(Date, nullable=False)  # Fund Release Date
+
+class ProjectTable(db.Model):
+    _tablename_ = 'project_table'
+
+    project_id = Column(Integer, primary_key=True, autoincrement=True)  # Primary Key
+    project_name = Column(String(255), nullable=False)  # Project Name
+    approval_date = Column(Date, nullable=False)  # Approval Date
+    investigator_id = Column(Integer, ForeignKey('investigator.investigator_id'), nullable=False)  # FK from Investigator
+    project_fund_id = Column(Integer, ForeignKey('project_fund.project_fund_id'), nullable=False)  # FK from ProjectFund
+    # sub_implementing_id = Column(Integer, ForeignKey('sub_agency.sub_implementing_id'), nullable=False)  # FK from SubAgency
+    project_status_id = Column(Integer, ForeignKey('project_status.project_status_id'), nullable=False)  # FK from ProjectStatus
+    sub_agency_id = Column(Integer, ForeignKey('sub_agency.sub_agency_id'), nullable=False)  # FK from SubAgency
+    agency_id = Column(Integer, ForeignKey('agency.agency_id'), nullable=False)  # FK from Agency
+    sub_investigator_id = Column(Integer, ForeignKey('sub_investigator.sub_investigator_id'), nullable=False)  # FK from SubInvestigator
+    project_type = Column(String(100), nullable=False)  # Project Type
+    project_start_date = Column(Date, nullable=False)  # Start Date
+    project_end_date = Column(Date, nullable=False)  # End Date
+    project_coordinator_id = Column(Integer, ForeignKey('project_coordinator.project_coordinator_id'), nullable=False)  # FK from ProjectCoordinator
+    project_description = Column(Text, nullable=True)  # Project Description
