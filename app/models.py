@@ -69,7 +69,7 @@ class SubInvestigator(db.Model):
     identification = Column(String(50), nullable=False, unique=True)  # Could be Aadhar or another ID
     sub_investigator_name = Column(String(100), nullable=False)
     phone_no = Column(String(15), nullable=False)
-    address = Column(String, nullable=False)
+    address = Column(String(120), nullable=False)
     experience = Column(String(100), nullable=False)
     # account_number = Column(String, nullable=False)
     # security_clearance = db.Column(db.String(50), nullable=True)

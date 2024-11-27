@@ -14,18 +14,28 @@ def create_app():
     db.init_app(app)
 
     # Import models to register them with SQLAlchemy
-    from app.models import Admin , Investigator
+    from app.models import Admin, Investigator, Agency, SubInvestigator  # Added SubInvestigator and Agency models
+
+    # Register blueprints
+    register_blueprints(app)
 
     # Create database tables if they don't exist
     with app.app_context():
         db.create_all()
 
+    return app
+
 def register_blueprints(app):
     from app.routes.admin import admin_bp
     from app.routes.investigator import investigator_bp
     from app.routes.agency import agency_bp
-    app.register_blueprint(admin_bp, url_prefix='/api')  # Example: prefix routes with /api
-    app.register_blueprint(investigator_bp, url_prefix='/api')  # Example: prefix routes with /api
-    app.register_blueprint(agency_bp, url_prefix='/api')  # Example: prefix routes with /api
+    from app.routes.SubInvestigator import sub_investigator_bp  # Register SubInvestigator blueprint
+    from app.routes.SubAgency import sub_agency_bp
 
-    return app
+    # Register all blueprints with a common API prefix
+    app.register_blueprint(admin_bp, url_prefix='/api')
+    app.register_blueprint(investigator_bp, url_prefix='/api')
+    app.register_blueprint(agency_bp, url_prefix='/api')
+    app.register_blueprint(sub_investigator_bp, url_prefix='/api')
+    app.register_blueprint(sub_agency_bp,url_prefix='/api')
+
