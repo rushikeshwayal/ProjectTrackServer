@@ -31,6 +31,8 @@ def register_blueprints(app):
     from app.routes.agency import agency_bp
     from app.routes.SubInvestigator import sub_investigator_bp  # Register SubInvestigator blueprint
     from app.routes.SubAgency import sub_agency_bp
+    from app.routes.ProjectFund import project_fund_bp  # Import the project_fund blueprint
+    from app.routes.ProjectStatus import project_status_bp 
 
     # Register all blueprints with a common API prefix
     app.register_blueprint(admin_bp, url_prefix='/api')
@@ -38,4 +40,6 @@ def register_blueprints(app):
     app.register_blueprint(agency_bp, url_prefix='/api')
     app.register_blueprint(sub_investigator_bp, url_prefix='/api')
     app.register_blueprint(sub_agency_bp,url_prefix='/api')
+    app.register_blueprint(project_fund_bp, url_prefix='/api')  
+    app.register_blueprint(project_status_bp, url_prefix='/api')
 
