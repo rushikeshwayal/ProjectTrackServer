@@ -34,6 +34,7 @@ def register_blueprints(app):
     from app.routes.ProjectFund import project_fund_bp  # Import the project_fund blueprint
     from app.routes.ProjectStatus import project_status_bp 
     from app.routes.Project import project_bp
+    from app.routes.ProjectCoordinator import projectcoordinator_bp
 
 
 
@@ -46,6 +47,8 @@ def register_blueprints(app):
     app.register_blueprint(project_fund_bp, url_prefix='/api')  
     app.register_blueprint(project_status_bp, url_prefix='/api')
     app.register_blueprint(project_bp, url_prefix='/api')
+    app.register_blueprint(projectcoordinator_bp, url_prefix='/api')
+
 
     
 
