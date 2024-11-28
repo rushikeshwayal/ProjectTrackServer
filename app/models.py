@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date ,Text ,Time, Float ,ForeignKey
+from sqlalchemy import Column, Integer, String, Date ,Text ,Time, Float ,ForeignKey,PrimaryKeyConstraint
 from app.extensions import db
 
 # class User(db.Model):
@@ -163,3 +163,19 @@ class ProjectTable(db.Model):
     project_end_date = Column(Date, nullable=False)  # End Date
     project_coordinator_id = Column(Integer, ForeignKey('project_coordinator.project_coordinator_id'), nullable=False)  # FK from ProjectCoordinator
     project_description = Column(Text, nullable=True)  # Project Description
+    
+class FundUtilization(db.Model):
+    __tablename__ = 'fund_utilization'
+
+    utilization_id = Column(Integer, autoincrement=True)
+    project_id = Column(Integer, ForeignKey('project_table.project_id'), nullable=False)
+    submission_date = Column(Date, nullable=False)
+    utilized_amount = Column(Float, nullable=False)
+    quarter = Column(String(10), nullable=False)
+    agency_name = Column(String(100), nullable=False)
+    budget_head = Column(String(100), nullable=False)
+
+    # Define composite primary key
+    __table_args__ = (
+        PrimaryKeyConstraint('utilization_id', 'project_id'),
+    )
