@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from app.models import db, ProjectFund  # Ensure ProjectFund model is imported
 from sqlalchemy import Column, Integer, Float, String, Date
+from datetime import datetime  # Import datetime module
 
 # Create a Blueprint for Project Fund
 project_fund_bp = Blueprint('project_fund', __name__)
@@ -36,3 +37,31 @@ def add_project_fund():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+
+# put api to Update a Project Fund
+@project_fund_bp.route('/put/project_fund/<int:project_fund_id>', methods=['PUT'])
+def update_project_fund(project_fund_id):
+    data = request.get_json()
+    project_fund = ProjectFund.query.get(project_fund_id)
+
+    if not project_fund:
+        return jsonify({"error": "Project Fund not found"}), 404
+
+    try:
+        # Update the project fund details
+        project_fund.fund_amount = data.get('fund_amount', project_fund.fund_amount)
+        project_fund.fund_releasing_authority = data.get('fund_releasing_authority', project_fund.fund_releasing_authority)
+        project_fund.project_phase = data.get('project_phase', project_fund.project_phase)
+        
+        # Date field requires conversion to proper date format
+        fund_release_date = data.get('fund_release_date', None)
+        if fund_release_date:
+            project_fund.fund_release_date = datetime.strptime(fund_release_date, '%Y-%m-%d').date()
+        
+        db.session.commit()
+
+        return jsonify({"message": "Project Fund updated successfully!"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500

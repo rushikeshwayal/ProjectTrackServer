@@ -40,3 +40,27 @@ def add_project_status():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+ 
+@project_status_bp.route('/put/project_status/<int:status_id>', methods=['PUT'])
+def update_project_status(status_id):
+    data = request.get_json()
+    status = ProjectStatus.query.get(status_id)
+
+    if not status:
+        return jsonify({"error": "Project Status not found"}), 404
+
+    try:
+        # Update the project status fields using data.get() method to allow partial updates
+        status.phase = data.get('phase', status.phase)
+        status.description = data.get('description', status.description)
+        status.date_of_updation = data.get('date_of_updation', status.date_of_updation)
+        status.time_of_updation = data.get('time_of_updation', status.time_of_updation)
+
+        # Commit the changes to the database
+        db.session.commit()
+        return jsonify({"message": "Project Status updated successfully!"}), 200
+    except Exception as e:
+        # If any exception occurs, roll back the transaction and return the error message
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500

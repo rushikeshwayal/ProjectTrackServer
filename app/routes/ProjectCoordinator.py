@@ -66,3 +66,44 @@ def add_project_coordinator():
     except Exception as e:
         current_app.logger.error(f'Error adding project coordinator: {e}')
         return jsonify({"error": "Failed to add project coordinator"}), 500
+    
+    # PUT route to update an existing project coordinator
+@projectcoordinator_bp.route('/put/project-coordinator/<int:id>', methods=['PUT'])
+def update_project_coordinator(id):
+    try:
+        data = request.get_json()
+
+        # Log the incoming data
+        current_app.logger.info(f'Received data to update project coordinator with ID: {id} - {data}')
+
+        # Fetch the existing project coordinator
+        coordinator = ProjectCoordinator.query.get(id)
+        
+        if not coordinator:
+            current_app.logger.warning(f'Project Coordinator with ID {id} not found.')
+            return jsonify({"error": f"Project Coordinator with ID {id} not found"}), 404
+
+        # Update the coordinator details
+        coordinator.project_coordinator_name = data.get('coordinator_name', coordinator.project_coordinator_name)
+        coordinator.phone_number = data.get('phone_no', coordinator.phone_number)
+        coordinator.email = data.get('email', coordinator.email)
+        coordinator.department = data.get('department', coordinator.department)
+        coordinator.experience = data.get('years_of_experience', coordinator.experience)
+        coordinator.branch = data.get('current_projects', coordinator.branch)
+        coordinator.highest_qualification = data.get('specialization', coordinator.highest_qualification)
+        coordinator.bank_details = data.get('bank_details', coordinator.bank_details)
+        coordinator.security_clearance = data.get('security_clearance', coordinator.security_clearance)
+        coordinator.dob = data.get('dob', coordinator.dob)
+        coordinator.designation = data.get('designation', coordinator.designation)
+        coordinator.identification = data.get('identification', coordinator.identification)
+        coordinator.address = data.get('address', coordinator.address)
+
+        # Commit the changes to the database
+        db.session.commit()
+        
+        current_app.logger.info(f'Project Coordinator with ID {id} updated successfully.')
+        return jsonify({"message": "Project Coordinator updated successfully!"})
+
+    except Exception as e:
+        current_app.logger.error(f'Error updating project coordinator with ID {id}: {e}')
+        return jsonify({"error": "Failed to update project coordinator"}), 500
