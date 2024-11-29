@@ -94,3 +94,23 @@ def update_sub_agency(sub_agency_id):
     except SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+    
+    
+# DELETE route to delete an existing sub-agency
+@sub_agency_bp.route('/delete/sub_agency/<int:sub_agency_id>', methods=['DELETE'])
+def delete_sub_agency(sub_agency_id):
+    try:
+        # Retrieve the sub-agency to delete
+        sub_agency = SubAgency.query.get(sub_agency_id)
+        if not sub_agency:
+            return jsonify({"error": "Sub-agency not found"}), 404
+
+        # Delete the sub-agency from the database
+        db.session.delete(sub_agency)
+        db.session.commit()
+
+        return jsonify({"message": "Sub-agency deleted successfully!"}), 200
+
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500

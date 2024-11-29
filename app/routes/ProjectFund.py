@@ -65,3 +65,23 @@ def update_project_fund(project_fund_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+    
+    
+@project_fund_bp.route('/delete/project_fund/<int:project_fund_id>', methods=['DELETE'])
+def delete_project_fund(project_fund_id):
+    try:
+        # Fetch the project fund by ID
+        project_fund = ProjectFund.query.get(project_fund_id)
+
+        if not project_fund:
+            return jsonify({"error": "Project Fund not found"}), 404
+
+        # Delete the project fund from the database
+        db.session.delete(project_fund)
+        db.session.commit()
+
+        return jsonify({"message": f"Project Fund with ID {project_fund_id} deleted successfully!"}), 200
+    except Exception as e:
+        # If any exception occurs, roll back the transaction and return the error message
+        db.session.rollback()
+        return jsonify({"error": f"An error occurred while deleting the Project Fund: {str(e)}"}), 500

@@ -61,3 +61,54 @@ def add_sub_investigator():
     except SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+    
+# PUT route to update a sub-investigator by ID
+@sub_investigator_bp.route('/put/sub_investigator/<int:sub_investigator_id>', methods=['PUT'])
+def update_sub_investigator(sub_investigator_id):
+    data = request.get_json()
+
+    # Fetch the sub-investigator by ID
+    sub_investigator = SubInvestigator.query.get(sub_investigator_id)
+    if not sub_investigator:
+        return jsonify({"error": "Sub-investigator not found"}), 404
+
+    try:
+        # Update fields if they are present in the request data
+        sub_investigator.sub_investigator_name = data.get('sub_investigator_name', sub_investigator.sub_investigator_name)
+        sub_investigator.email = data.get('email', sub_investigator.email)
+        sub_investigator.dob = data.get('dob', sub_investigator.dob)
+        sub_investigator.designation = data.get('designation', sub_investigator.designation)
+        sub_investigator.department = data.get('department', sub_investigator.department)
+        sub_investigator.identification = data.get('identification', sub_investigator.identification)
+        sub_investigator.phone_no = data.get('phone_no', sub_investigator.phone_no)
+        sub_investigator.address = data.get('address', sub_investigator.address)
+        sub_investigator.experience = data.get('experience', sub_investigator.experience)
+        sub_investigator.highest_qualification = data.get('highest_qualification', sub_investigator.highest_qualification)
+
+        # Commit the changes to the database
+        db.session.commit()
+
+        return jsonify({"message": "Sub-investigator updated successfully!"}), 200
+
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500    
+
+# DELETE route to remove a sub-investigator by ID
+@sub_investigator_bp.route('/delete/sub_investigator/<int:sub_investigator_id>', methods=['DELETE'])
+def delete_sub_investigator(sub_investigator_id):
+    try:
+        # Fetch the sub-investigator by ID
+        sub_investigator = SubInvestigator.query.get(sub_investigator_id)
+        if not sub_investigator:
+            return jsonify({"error": "Sub-investigator not found"}), 404
+
+        # Delete the sub-investigator
+        db.session.delete(sub_investigator)
+        db.session.commit()
+
+        return jsonify({"message": "Sub-investigator deleted successfully!"}), 200
+
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
