@@ -62,6 +62,98 @@ def investigatorput(investigator_id):
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
+# POST API to Add a New Investigator
+@investigator_bp.route('/post/investigator', methods=['POST'])
+def add_investigator():
+    data = request.get_json()
+
+    try:
+        # Create a new Investigator instance with data from the request
+        new_investigator = Investigator(
+            investigator_name=data['investigator_name'],
+            email=data['email'],
+            phone_no=data['phone_no'],
+            dob=data['dob'],
+            address=data['address'],
+            username=data['username'],
+            password=data['password'],
+            experience=data['experience'],
+            account_number=data['account_number'],
+            security_clearance=data['security_clearance'],
+            highest_qualification=data['highest_qualification'],
+            designation=data['designation'],
+            authority=data['authority'],
+            identification=data['identification'],
+            department=data['department']
+        )
+
+        # Add the new investigator to the database
+        db.session.add(new_investigator)
+        db.session.commit()
+
+        # Return success response
+        return jsonify({"message": "Investigator added successfully!"}), 201
+
+    except KeyError as e:
+        # Handle missing fields
+        return jsonify({"error": f"Missing required field: {str(e)}"}), 400
+    except Exception as e:
+        # Rollback on error
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+    
+#put api    
+@investigator_bp.route('/put/investigator/<int:investigator_id>', methods=['PUT'])
+def update_investigator(investigator_id):
+    data = request.get_json()
+    investigator = Investigator.query.get(investigator_id)
+
+    if not investigator:
+        return jsonify({"error": "Investigator not found"}), 404
+
+    try:
+        # Update investigator details with provided data or keep existing values
+        investigator.investigator_name = data.get('investigator_name', investigator.investigator_name)
+        investigator.email = data.get('email', investigator.email)
+        investigator.phone_no = data.get('phone_no', investigator.phone_no)
+        investigator.dob = data.get('dob', investigator.dob)
+        investigator.address = data.get('address', investigator.address)
+        investigator.username = data.get('username', investigator.username)
+        investigator.password = data.get('password', investigator.password)
+        investigator.experience = data.get('experience', investigator.experience)
+        investigator.account_number = data.get('account_number', investigator.account_number)
+        investigator.security_clearance = data.get('security_clearance', investigator.security_clearance)
+        investigator.highest_qualification = data.get('highest_qualification', investigator.highest_qualification)
+        investigator.designation = data.get('designation', investigator.designation)
+        investigator.authority = data.get('authority', investigator.authority)
+        investigator.identification = data.get('identification', investigator.identification)
+        investigator.department = data.get('department', investigator.department)
+
+        # Commit the changes to the database
+        db.session.commit()
+        return jsonify({"message": "Investigator updated successfully!"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+    
+ #delete api   
+@investigator_bp.route('/delete/investigator/<int:investigator_id>', methods=['DELETE'])
+def delete_investigator(investigator_id):
+    investigator = Investigator.query.get(investigator_id)
+
+    if not investigator:
+        return jsonify({"error": "Investigator not found"}), 404
+
+    try:
+        # Delete the investigator from the database
+        db.session.delete(investigator)
+        db.session.commit()
+        return jsonify({"message": "Investigator deleted successfully!"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 # @i.route('/investigator', methods=['GET'])
 # def get_admins():

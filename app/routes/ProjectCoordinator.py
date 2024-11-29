@@ -107,3 +107,30 @@ def update_project_coordinator(id):
     except Exception as e:
         current_app.logger.error(f'Error updating project coordinator with ID {id}: {e}')
         return jsonify({"error": "Failed to update project coordinator"}), 500
+    
+    
+# DELETE route to remove a project coordinator by ID
+@projectcoordinator_bp.route('/delete/project-coordinator/<int:id>', methods=['DELETE'])
+def delete_project_coordinator(id):
+    try:
+        # Log the request to delete a project coordinator
+        current_app.logger.info(f'Request received to delete project coordinator with ID: {id}')
+
+        # Fetch the project coordinator by ID
+        coordinator = ProjectCoordinator.query.get(id)
+
+        if not coordinator:
+            current_app.logger.warning(f'Project Coordinator with ID {id} not found.')
+            return jsonify({"error": f"Project Coordinator with ID {id} not found"}), 404
+
+        # Delete the project coordinator from the database
+        db.session.delete(coordinator)
+        db.session.commit()
+
+        current_app.logger.info(f'Project Coordinator with ID {id} deleted successfully.')
+        return jsonify({"message": "Project Coordinator deleted successfully!"})
+
+    except Exception as e:
+        # Log the error and respond with a failure message
+        current_app.logger.error(f'Error deleting project coordinator with ID {id}: {e}')
+        return jsonify({"error": "Failed to delete project coordinator"}), 500

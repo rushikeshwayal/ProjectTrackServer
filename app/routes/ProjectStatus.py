@@ -64,3 +64,24 @@ def update_project_status(status_id):
         # If any exception occurs, roll back the transaction and return the error message
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+
+@project_status_bp.route('/delete/project_status/<int:status_id>', methods=['DELETE'])
+def delete_project_status(status_id):
+    try:
+        # Fetch the project status to delete
+        status = ProjectStatus.query.get(status_id)
+
+        if not status:
+            return jsonify({"error": "Project Status not found"}), 404
+
+        # Delete the project status
+        db.session.delete(status)
+        db.session.commit()
+
+        return jsonify({"message": "Project Status deleted successfully!"}), 200
+
+    except Exception as e:
+        # Rollback the transaction in case of an error
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
