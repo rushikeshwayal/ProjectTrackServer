@@ -80,3 +80,20 @@ def update_project(project_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+    
+@project_bp.route('/delete/project/<int:project_id>', methods=['DELETE'])
+def delete_project(project_id):
+    project = ProjectTable.query.get(project_id)
+
+    if not project:
+        return jsonify({"error": "Project not found"}), 404  # This returns early if project not found.
+
+    try:
+        db.session.delete(project)
+        db.session.commit()
+        return jsonify({"message": "Project deleted successfully!"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
