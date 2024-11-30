@@ -114,3 +114,19 @@ def delete_sub_agency(sub_agency_id):
     except SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+@sub_agency_bp.route('/sub_agency/<int:sub_agency_id>', methods=['GET'])
+def get_sub_agency_by_id(sub_agency_id):
+    sub_agency = SubAgency.query.get(sub_agency_id)
+    if not sub_agency:
+        return jsonify({'message': 'SubAgency not found'}), 404
+    return jsonify({
+        'sub_agency_id': sub_agency.sub_agency_id,
+        'sub_agency_name': sub_agency.sub_agency_name,
+        'phone_no': sub_agency.phone_no,
+        'email': sub_agency.email,
+        'sub_agency_professionals': sub_agency.sub_agency_professionals,
+        'head_of_agency': sub_agency.head_of_agency,
+        'address': sub_agency.address,
+        'established_date': sub_agency.established_date
+    })

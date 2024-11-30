@@ -183,5 +183,27 @@ def delete_investigator(investigator_id):
 #         "identification": admin.identification,
 #         "department": admin.department
 #     } for admin in admins])
-     
-   
+
+
+@investigator_bp.route('/investigator/<int:investigator_id>', methods=['GET'])
+def get_investigator_by_id(investigator_id):
+    investigator = Investigator.query.get(investigator_id)
+    if not investigator:
+        return jsonify({'message': 'Investigator not found'}), 404
+    return jsonify({
+        'investigator_id': investigator.investigator_id,
+        'email': investigator.email,
+        'username': investigator.username,
+        'dob': investigator.dob,
+        'designation': investigator.designation,
+        'department': investigator.department,
+        'identification': investigator.identification,
+        'investigator_name': investigator.investigator_name,
+        'phone_no': investigator.phone_no,
+        'address': investigator.address,
+        'experience': investigator.experience,
+        'account_number': investigator.account_number,
+        'security_clearance': investigator.security_clearance,
+        'authority': investigator.authority,
+        'highest_qualification': investigator.highest_qualification
+    })

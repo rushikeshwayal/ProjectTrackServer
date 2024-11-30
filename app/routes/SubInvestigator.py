@@ -112,3 +112,23 @@ def delete_sub_investigator(sub_investigator_id):
     except SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+
+@sub_investigator_bp.route('/sub_investigator/<int:sub_investigator_id>', methods=['GET'])
+def get_sub_investigator_by_id(sub_investigator_id):
+    sub_investigator = SubInvestigator.query.get(sub_investigator_id)
+    if not sub_investigator:
+        return jsonify({'message': 'SubInvestigator not found'}), 404
+    return jsonify({
+        'sub_investigator_id': sub_investigator.sub_investigator_id,
+        'email': sub_investigator.email,
+        'dob': sub_investigator.dob,
+        'designation': sub_investigator.designation,
+        'department': sub_investigator.department,
+        'identification': sub_investigator.identification,
+        'sub_investigator_name': sub_investigator.sub_investigator_name,
+        'phone_no': sub_investigator.phone_no,
+        'address': sub_investigator.address,
+        'experience': sub_investigator.experience,
+        'highest_qualification': sub_investigator.highest_qualification
+    })
