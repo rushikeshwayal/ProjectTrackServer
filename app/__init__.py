@@ -8,7 +8,9 @@ load_dotenv()
 
 def create_app():
     app = Flask(__name__)
-    CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
+    CORS(app, resources={r"/*": {"origins": ["http://localhost:5173"]}},
+         supports_credentials=True,
+         allow_headers=["Content-Type", "Authorization"])
     app.config.from_object(Config)
 
     # Initialize the database

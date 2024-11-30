@@ -12,8 +12,8 @@ def get_projects():
         "project_name": project.project_name,
         "approval_date": project.approval_date,
         "investigator_id": project.investigator_id,
-        "project_fund_id": project.project_fund_id,
-        "project_status_id": project.project_status_id,
+        # "project_fund_id": project.project_fund_id,
+        # "project_status_id": project.project_status_id,
         "sub_agency_id": project.sub_agency_id,
         "agency_id": project.agency_id,
         "sub_investigator_id": project.sub_investigator_id,
@@ -31,10 +31,10 @@ def create_project():
     try:
         new_project = ProjectTable(
             project_name=data['project_name'],
-            approval_date=data['approval_date'],
+            # approval_date=data['approval_date'],
             investigator_id=data['investigator_id'],
-            project_fund_id=data['project_fund_id'],
-            project_status_id=data['project_status_id'],
+            # project_fund_id=data['project_fund_id'],
+            # project_status_id=data['project_status_id'],
             sub_agency_id=data['sub_agency_id'],
             agency_id=data['agency_id'],
             sub_investigator_id=data['sub_investigator_id'],
@@ -64,8 +64,8 @@ def update_project(project_id):
         project.project_name = data.get('project_name', project.project_name)
         project.approval_date = data.get('approval_date', project.approval_date)
         project.investigator_id = data.get('investigator_id', project.investigator_id)
-        project.project_fund_id = data.get('project_fund_id', project.project_fund_id)
-        project.project_status_id = data.get('project_status_id', project.project_status_id)
+        # project.project_fund_id = data.get('project_fund_id', project.project_fund_id)
+        # project.project_status_id = data.get('project_status_id', project.project_status_id)
         project.sub_agency_id = data.get('sub_agency_id', project.sub_agency_id)
         project.agency_id = data.get('agency_id', project.agency_id)
         project.sub_investigator_id = data.get('sub_investigator_id', project.sub_investigator_id)
@@ -95,5 +95,33 @@ def delete_project(project_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+
+        # Define a route to get project by ID
+@project_bp.route('/project/<int:project_id>', methods=['GET'])
+def get_project_by_id(project_id):
+    # Fetch the project from the database by its project_id
+    project = ProjectTable.query.get(project_id)
+    
+    if project is None:
+        return jsonify({'message': 'Project not found'}), 404
+    
+    # Return the project details as a JSON response
+    project_data = {
+        'project_id': project.project_id,
+        'project_name': project.project_name,
+        'approval_date': project.approval_date,
+        'investigator_id': project.investigator_id,
+        'sub_agency_id': project.sub_agency_id,
+        'agency_id': project.agency_id,
+        'sub_investigator_id': project.sub_investigator_id,
+        'project_type': project.project_type,
+        'project_start_date': project.project_start_date,
+        'project_end_date': project.project_end_date,
+        'project_coordinator_id': project.project_coordinator_id,
+        'project_description': project.project_description
+    }
+    
+    return jsonify(project_data), 200
 
 

@@ -15,7 +15,8 @@ def get_project_fund():
         "fund_amount": fund.fund_amount,
         "fund_releasing_authority": fund.fund_releasing_authority,
         "project_phase": fund.project_phase,
-        "fund_release_date": fund.fund_release_date.strftime('%Y-%m-%d')  # Format date as string
+        "fund_release_date": fund.fund_release_date.strftime('%Y-%m-%d'),  # Format date as string
+        "project_id": fund.project_id
     } for fund in project_funds])
 
 # Route to Add a New Project Fund
@@ -27,7 +28,8 @@ def add_project_fund():
             fund_amount=data['fund_amount'],
             fund_releasing_authority=data['fund_releasing_authority'],
             project_phase=data['project_phase'],
-            fund_release_date=data['fund_release_date']
+            fund_release_date=data['fund_release_date'],
+            project_id=data['project_id']
         )
         db.session.add(new_project_fund)
         db.session.commit()
@@ -53,6 +55,7 @@ def update_project_fund(project_fund_id):
         project_fund.fund_amount = data.get('fund_amount', project_fund.fund_amount)
         project_fund.fund_releasing_authority = data.get('fund_releasing_authority', project_fund.fund_releasing_authority)
         project_fund.project_phase = data.get('project_phase', project_fund.project_phase)
+        project_fund.project_id = data.get('project_id', project_fund.project_id)
         
         # Date field requires conversion to proper date format
         fund_release_date = data.get('fund_release_date', None)

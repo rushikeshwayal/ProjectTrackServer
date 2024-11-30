@@ -108,6 +108,7 @@ class ProjectStatus(db.Model):
     description = Column(Text, nullable=True)  # Detailed description of the project status
     date_of_updation = Column(Date, nullable=False)  # Date when the status was last updated
     time_of_updation = Column(Time, nullable=False)
+    project_id = Column(Integer, ForeignKey('project_table.project_id'), nullable=False)  # FK from ProjectTable
 
 class ProjectCoordinator(db.Model):
     _tablename_ = 'project_coordinator'
@@ -144,17 +145,18 @@ class ProjectFund(db.Model):
     fund_releasing_authority = Column(String(255), nullable=False)  # Fund Releasing Authority
     project_phase = Column(String(100), nullable=False)  # Project Phase
     fund_release_date = Column(Date, nullable=False)  # Fund Release Date
+    project_id = Column(Integer, ForeignKey('project_table.project_id'), nullable=False)  # FK from ProjectTable
 
 class ProjectTable(db.Model):
     _tablename_ = 'project_table'
 
     project_id = Column(Integer, primary_key=True, autoincrement=True)  # Primary Key
     project_name = Column(String(255), nullable=False)  # Project Name
-    approval_date = Column(Date, nullable=False)  # Approval Date
+    approval_date = Column(Date)  # Approval Date
     investigator_id = Column(Integer, ForeignKey('investigator.investigator_id'), nullable=False)  # FK from Investigator
-    project_fund_id = Column(Integer, ForeignKey('project_fund.project_fund_id'), nullable=False)  # FK from ProjectFund
+    # project_fund_id = Column(Integer, ForeignKey('project_fund.project_fund_id'), nullable=False)  # FK from ProjectFund
     # sub_implementing_id = Column(Integer, ForeignKey('sub_agency.sub_implementing_id'), nullable=False)  # FK from SubAgency
-    project_status_id = Column(Integer, ForeignKey('project_status.project_status_id'), nullable=False)  # FK from ProjectStatus
+    # project_status_id = Column(Integer, ForeignKey('project_status.project_status_id'), nullable=False)  # FK from ProjectStatus
     sub_agency_id = Column(Integer, ForeignKey('sub_agency.sub_agency_id'), nullable=False)  # FK from SubAgency
     agency_id = Column(Integer, ForeignKey('agency.agency_id'), nullable=False)  # FK from Agency
     sub_investigator_id = Column(Integer, ForeignKey('sub_investigator.sub_investigator_id'), nullable=False)  # FK from SubInvestigator

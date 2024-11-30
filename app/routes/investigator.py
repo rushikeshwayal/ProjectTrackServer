@@ -65,6 +65,13 @@ def investigatorput(investigator_id):
 # POST API to Add a New Investigator
 @investigator_bp.route('/post/investigator', methods=['POST'])
 def add_investigator():
+    if request.method == 'OPTIONS':
+        # CORS preflight response
+        response = jsonify({'status': 'OK'})
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        return response
     data = request.get_json()
 
     try:
