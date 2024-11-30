@@ -41,13 +41,13 @@ def add_project_coordinator():
 
         # Create a new project coordinator object
         new_coordinator = ProjectCoordinator(
-            project_coordinator_name=data['coordinator_name'],
+             project_coordinator_name=data['project_coordinator_name'],
             email=data['email'],
             phone_number=data['phone_no'],
             department=data['department'],
             experience=data['years_of_experience'],
-            branch=data['current_projects'],
-            highest_qualification=data['specialization'],
+            branch=data['branch'],
+            highest_qualification=data['highest_qualification'],
             bank_details=data.get('bank_details', ''),
             security_clearance=data.get('security_clearance', ''),
             dob=data['dob'],

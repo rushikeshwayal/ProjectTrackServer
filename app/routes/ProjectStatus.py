@@ -14,7 +14,8 @@ def get_project_status():
         "phase": status.phase,
         "description": status.description,
         "date_of_updation": status.date_of_updation.strftime('%Y-%m-%d'),  # Format date
-        "time_of_updation": status.time_of_updation.strftime('%H:%M:%S')  # Format time
+        "time_of_updation": status.time_of_updation.strftime('%H:%M:%S'),  # Format time
+        "project_id": status.project_id
     } for status in project_statuses])
 
 # Route to Add a New Project Status
@@ -30,7 +31,8 @@ def add_project_status():
             phase=data['phase'],
             description=data['description'],
             date_of_updation=date_of_updation,
-            time_of_updation=time_of_updation
+            time_of_updation=time_of_updation,
+            project_id=data['project_id']
         )
         db.session.add(new_project_status)
         db.session.commit()
@@ -56,6 +58,7 @@ def update_project_status(status_id):
         status.description = data.get('description', status.description)
         status.date_of_updation = data.get('date_of_updation', status.date_of_updation)
         status.time_of_updation = data.get('time_of_updation', status.time_of_updation)
+        status.project_id = data.get('project_id', status.project_id)
 
         # Commit the changes to the database
         db.session.commit()
