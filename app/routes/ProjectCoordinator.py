@@ -134,3 +134,25 @@ def delete_project_coordinator(id):
         # Log the error and respond with a failure message
         current_app.logger.error(f'Error deleting project coordinator with ID {id}: {e}')
         return jsonify({"error": "Failed to delete project coordinator"}), 500
+
+@projectcoordinator_bp.route('/project-coordinator/<int:project_coordinator_id>', methods=['GET'])
+def get_project_coordinator_by_id(project_coordinator_id):
+    project_coordinator = ProjectCoordinator.query.get(project_coordinator_id)
+    if not project_coordinator:
+        return jsonify({'message': 'Project Coordinator not found'}), 404
+    return jsonify({
+        'project_coordinator_id': project_coordinator.project_coordinator_id,
+        'project_coordinator_name': project_coordinator.project_coordinator_name,
+        'phone_number': project_coordinator.phone_number,
+        'address': project_coordinator.address,
+        'experience': project_coordinator.experience,
+        'bank_details': project_coordinator.bank_details,
+        'security_clearance': project_coordinator.security_clearance,
+        'highest_qualification': project_coordinator.highest_qualification,
+        'email': project_coordinator.email,
+        'dob': project_coordinator.dob,
+        'designation': project_coordinator.designation,
+        'department': project_coordinator.department,
+        'identification': project_coordinator.identification,
+        'branch': project_coordinator.branch
+    })
