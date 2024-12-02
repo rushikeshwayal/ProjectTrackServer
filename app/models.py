@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, Date ,Text ,Time, Float ,ForeignKey,PrimaryKeyConstraint
+from sqlalchemy import Column, Integer, String, Date ,Text ,Time, Float ,ForeignKey,PrimaryKeyConstraint, event
 from app.extensions import db
+from sqlalchemy.orm import validates
 
 # class User(db.Model):
 #     __tablename__ = 'users'
@@ -10,51 +11,70 @@ from app.extensions import db
 #     access = db.Column(db.String(50))  # Access level
 
 class Admin(db.Model):
-    __tablename__ = 'admins'
+    __tablename__ = 'admin'
+    
+    admin_id = Column(Integer, primary_key=True)
+    adminUniqe_id = Column(String(50), unique=True)
+    admin_name = Column(String(50), nullable=False)
+    email = Column(String(50), unique=True, nullable=False)
+    phone_no = Column(String(15), nullable=False)
+    dob = Column(Date, nullable=True)
+    address = Column(String(255), nullable=True)
+    username = Column(String(50), unique=True, nullable=False)
+    password = Column(String(255), nullable=False)
+    experience = Column(String(50), nullable=True)
+    account_number = Column(String(20), nullable=True)
+    security_clearance = Column(String(50), nullable=True)
+    highest_qualification = Column(String(50), nullable=True)
+    designation = Column(String(50), nullable=True)
+    authority = Column(String(20), nullable=False)
+    identification = Column(String(50), nullable=True)
+    department = Column(String(50), nullable=True)
 
-    admin_id = db.Column(db.Integer, primary_key=True)
-    admin_name = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(50), unique=True, nullable=False)
-    phone_no = db.Column(db.String(15), nullable=False)
-    dob = db.Column(db.Date, nullable=True)
-    address = db.Column(db.String(255), nullable=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
-    experience = db.Column(db.String(50), nullable=True)
-    account_number = db.Column(db.String(20), nullable=True)
-    security_clearance = db.Column(db.String(50), nullable=True)
-    highest_qualification = db.Column(db.String(50), nullable=True)
-    designation = db.Column(db.String(50), nullable=True)
-    authority = db.Column(db.String(20), nullable=False)
-    identification = db.Column(db.String(50), nullable=True)
-    department = db.Column(db.String(50), nullable=True)
+    @validates('adminUniqe_id')
+    def generate_adminUnique_id(self, key, value):
+        # Do not set adminUniqe_id directly through this validator.
+        return value
+# Listen for the "before insert" event to generate adminUniqe_id dynamically
+@event.listens_for(Admin, 'before_insert')
+def generate_adminUnique_id(mapper, connection, target):
+    if not target.adminUniqe_id:  # If the adminUnique_id is not already set
+        target.adminUniqe_id = f"admin_{target.admin_id}"
 
 
 class Investigator(db.Model):
     __tablename__ = 'investigator'
 
-    investigator_id = Column(Integer, primary_key=True, autoincrement=True)
-    email = Column(String(100), nullable=False, unique=True)
+    investigator_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    investigatorUniqe_id = db.Column(db.String(50), unique=True)
+    email = db.Column(db.String(100), nullable=False, unique=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    dob = Column(Date, nullable=False)  # Date of birth
-    designation = Column(String(50), nullable=False)
-    department = Column(String(100), nullable=False)
-    identification = Column(String(50), nullable=False, unique=True)  # Could be Aadhar or another ID
-    investigator_name = Column(String(100), nullable=False)
-    phone_no = Column(String(15), nullable=False)
-    address = Column(String, nullable=False)
-    experience = Column(String(100), nullable=False)
-    account_number = Column(String, nullable=False)
+    dob = db.Column(db.Date, nullable=False)
+    designation = db.Column(db.String(50), nullable=False)
+    department = db.Column(db.String(100), nullable=False)
+    identification = db.Column(db.String(50), nullable=False, unique=True)
+    investigator_name = db.Column(db.String(100), nullable=False)
+    phone_no = db.Column(db.String(15), nullable=False)
+    address = db.Column(db.String, nullable=False)
+    experience = db.Column(db.String(100), nullable=False)
+    account_number = db.Column(db.String, nullable=False)
     security_clearance = db.Column(db.String(50), nullable=True)
     authority = db.Column(db.String(20), nullable=False)
-    highest_qualification = Column(String(100), nullable=False)
-    # foreign key definition
-    # implementin_agency_id = Column(Integer, db.ForeignKey('agency.id'), nullable=False)
-    # # You can also define a relationship to the "agency" table if needed
-    # implementin_agency = db.relationship('Agency', backref='investigators')
-    # def __repr__(self):
-    #     return f'<Investigator {self.investigator_name}>'
+    highest_qualification = db.Column(db.String(100), nullable=False)
+
+    # This will generate the investigatorUniqe_id after insert
+    @validates('investigatorUniqe_id')
+    def generate_investigatorUniqe_id(self, key, value):
+        # Leave this as it is to ensure the value is correctly set after insert
+        return value
+@event.listens_for(Investigator, 'after_insert')
+def generate_investigatorUniqe_id(mapper, connection, target):
+    # After the investigator record is inserted and we have an id, update investigatorUniqe_id
+    if not target.investigatorUniqe_id:  # If investigatorUniqe_id is not set yet
+        target.investigatorUniqe_id = f"investigator_{target.investigator_id}"
+        db.session.merge(target)  # Use merge to update the row
+
 
 class SubInvestigator(db.Model):
     __tablename__ = 'sub_investigator'
