@@ -29,7 +29,7 @@ def get_admins():
         "identification": admin.identification,
         "department": admin.department
     } for admin in admins])
-     
+
 # PUT API Endpoint to update an Admin record
 @admin_bp.route('/admin/<int:admin_id>', methods=['PUT'])
 def update_admin(admin_id):

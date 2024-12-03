@@ -201,3 +201,20 @@ class FundUtilization(db.Model):
     __table_args__ = (
         PrimaryKeyConstraint('utilization_id', 'project_id'),
     )
+
+class Message(db.Model):
+    __tablename__ = 'message'
+
+    message_id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.String(50), nullable=False)  # String to accommodate IDs like "admin_1"
+    sender_type = db.Column(db.String(50), nullable=False)  # Specifies the sender type ("investigator" or "admin")
+    receiver_id = db.Column(db.String(50), nullable=False)  # String to accommodate IDs like "investigator_9"
+    receiver_type = db.Column(db.String(50), nullable=False)  # Specifies the receiver type ("investigator" or "admin")
+    subject = db.Column(db.String(255), nullable=False)  # Message subject
+    body = db.Column(db.Text, nullable=False)  # Message body
+    attachment = db.Column(db.LargeBinary, nullable=True)  # Binary data for file attachments
+    attachment_name = db.Column(db.String(255), nullable=True)  # Name of the attachment file
+    attachment_mime_type = db.Column(db.String(100), nullable=True)  # MIME type of the file (e.g., "application/pdf")
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
+
+
