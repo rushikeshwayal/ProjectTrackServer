@@ -11,6 +11,7 @@ def get_investigators():
     investigators = Investigator.query.all()
     return jsonify([{
         "investigator_id": investigator.investigator_id,
+        "investigatorUniqe_id":investigator.investigatorUniqe_id,
         "investigator_name": investigator.investigator_name,
         "email": investigator.email,
         "phone_no": investigator.phone_no, 
@@ -62,7 +63,7 @@ def investigatorput(investigator_id):
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
-# POST API to Add a New Investigator
+
 @investigator_bp.route('/post/investigator', methods=['POST'])
 def add_investigator():
     if request.method == 'OPTIONS':
@@ -72,8 +73,9 @@ def add_investigator():
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
         return response
-    data = request.get_json()
 
+    data = request.get_json()
+    
     try:
         # Create a new Investigator instance with data from the request
         new_investigator = Investigator(
@@ -86,7 +88,7 @@ def add_investigator():
             password=data['password'],
             experience=data['experience'],
             account_number=data['account_number'],
-            security_clearance=data['security_clearance'],
+            security_clearance=data.get('security_clearance'),  # Optional field
             highest_qualification=data['highest_qualification'],
             designation=data['designation'],
             authority=data['authority'],
@@ -96,19 +98,31 @@ def add_investigator():
 
         # Add the new investigator to the database
         db.session.add(new_investigator)
-        db.session.commit()
+        db.session.commit()  # Commit to generate the investigator_id
+
+        # Assign the investigatorUniqe_id after the investigator_id is generated
+        new_investigator.investigatorUniqe_id = f"investigator_{new_investigator.investigator_id}"
+        db.session.commit()  # Commit again to save the updated investigatorUniqe_id
 
         # Return success response
-        return jsonify({"message": "Investigator added successfully!"}), 201
+        return jsonify({
+            "message": "Investigator added successfully!",
+            "investigatorUniqe_id": new_investigator.investigatorUniqe_id,
+            "investigator_id": new_investigator.investigator_id
+        }), 201
 
     except KeyError as e:
         # Handle missing fields
         return jsonify({"error": f"Missing required field: {str(e)}"}), 400
     except Exception as e:
-        # Rollback on error
+        # Rollback on error and log the error for debugging
         db.session.rollback()
+        print(f"Error occurred: {str(e)}")  # This will help log the error
         return jsonify({"error": str(e)}), 500
+
     
+
+
 #put api    
 @investigator_bp.route('/put/investigator/<int:investigator_id>', methods=['PUT'])
 def update_investigator(investigator_id):
