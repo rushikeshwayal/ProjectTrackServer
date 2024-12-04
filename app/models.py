@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, String, Date ,Text ,Time, Float ,ForeignKey,PrimaryKeyConstraint, event
 from app.extensions import db
 from sqlalchemy.orm import validates
+from sqlalchemy import Column, Integer, String, Date ,Text ,Time, Float ,ForeignKey,PrimaryKeyConstraint, event,LargeBinary,DateTime  
+from datetime import datetime  # For default value
 
 # class User(db.Model):
 #     __tablename__ = 'users'
@@ -217,4 +219,14 @@ class Message(db.Model):
     attachment_mime_type = db.Column(db.String(100), nullable=True)  # MIME type of the file (e.g., "application/pdf")
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
 
+class Form(db.Model):
+    __tablename__ = 'forms'
 
+    id = db.Column(db.Integer, primary_key=True)
+    form_name = db.Column(db.String(255), nullable=False)  # To store the form name
+    file_data = db.Column(db.LargeBinary, nullable=False)  # Store the PDF file in binary
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)  # To track when the form was uploaded
+
+    def __init__(self, form_name, file_data):
+        self.form_name = form_name
+        self.file_data = file_data

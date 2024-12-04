@@ -13,10 +13,8 @@ def create_app():
          allow_headers=["Content-Type", "Authorization"])
     app.config.from_object(Config)
 
-    # Initialize the database
     db.init_app(app)
 
-    # Import models to register them with SQLAlchemy
     from app.models import Admin
 
     # Create database tables if they don't exist
