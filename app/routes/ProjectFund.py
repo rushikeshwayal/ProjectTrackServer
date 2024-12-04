@@ -9,6 +9,13 @@ project_fund_bp = Blueprint('project_fund', __name__)
 # Route to Get All Project Funds
 @project_fund_bp.route('/project_fund', methods=['GET'])
 def get_project_fund():
+    if request.method == 'OPTIONS':
+        # CORS preflight response
+        response = jsonify({'status': 'OK'})
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        return response
     project_funds = ProjectFund.query.all()
     return jsonify([{
         "project_fund_id": fund.project_fund_id,
@@ -19,9 +26,44 @@ def get_project_fund():
         "project_id": fund.project_id
     } for fund in project_funds])
 
+@project_fund_bp.route('/project_fund/<int:project_id>', methods=['GET'])
+def get_project_fund_by_id(project_id):
+    """
+    Fetch fund report by project_id
+    """
+    try:
+        fund_report = ProjectFund.query.filter_by(project_id=project_id).all()
+        
+        if not fund_report:
+            return jsonify({"error": "No fund report found for the given project_id"}), 404
+
+        # Format the response
+        response = [{
+            "project_fund_id": fund.project_fund_id,
+            "fund_amount": fund.fund_amount,
+            "fund_releasing_authority": fund.fund_releasing_authority,
+            "project_phase": fund.project_phase,
+            "fund_release_date": fund.fund_release_date.strftime('%Y-%m-%d'),
+            "project_id": fund.project_id
+        } for fund in fund_report]
+
+        return jsonify(response), 200
+
+    except Exception as e:
+        # Log the exception if needed
+        print(f"Error fetching fund report: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
 # Route to Add a New Project Fund
 @project_fund_bp.route('/post/project_fund', methods=['POST'])
 def add_project_fund():
+    if request.method == 'OPTIONS':
+        # CORS preflight response
+        response = jsonify({'status': 'OK'})
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        return response
     data = request.get_json()
     try:
         new_project_fund = ProjectFund(
