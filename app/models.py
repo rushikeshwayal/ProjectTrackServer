@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, Date ,Text ,Time, Float ,ForeignKey,PrimaryKeyConstraint, event
+from sqlalchemy import Column, Integer, String, Date ,Text ,Time, Float ,ForeignKey,PrimaryKeyConstraint, event,LargeBinary,DateTime  
 from app.extensions import db
 from sqlalchemy.orm import validates
+from datetime import datetime  # For default value
+
 
 # class User(db.Model):
 #     __tablename__ = 'users'
@@ -216,5 +218,41 @@ class Message(db.Model):
     attachment_name = db.Column(db.String(255), nullable=True)  # Name of the attachment file
     attachment_mime_type = db.Column(db.String(100), nullable=True)  # MIME type of the file (e.g., "application/pdf")
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
+
+class QuarterlyExpenditure(db.Model):
+    __tablename__ = 'quarterly_expenditures'
+
+    expenditure_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    project_id = db.Column(db.Integer, db.ForeignKey('project_table.project_id'), nullable=False)  # Foreign key reference
+    project_name = db.Column(db.String(255), nullable=False)
+    project_code = db.Column(db.String(50), nullable=False)
+    company_name = db.Column(db.String(255), nullable=False)
+    quarter_ending = db.Column(db.Date, nullable=False)
+    equipment_name = db.Column(db.String(255), nullable=False)
+    supplier_name = db.Column(db.String(255), nullable=False)
+    no_of_units = db.Column(db.Integer, nullable=False)
+    unit_value = db.Column(db.Float, nullable=False)
+    total_value = db.Column(db.Float, nullable=False)
+    approved_cost = db.Column(db.Float, nullable=False)
+    progressive_expenditure = db.Column(db.Float, nullable=False)
+    associate_finance_officer = db.Column(db.String(255), nullable=False)
+    project_leader = db.Column(db.String(255), nullable=False)
+
+    # Relationship for easy access to related project details (optional)
+    project = db.relationship('ProjectTable', backref=db.backref('quarterly_expenditures', lazy=True))
+
+
+
+class Form(db.Model):
+    __tablename__ = 'forms'
+
+    id = db.Column(db.Integer, primary_key=True)
+    form_name = db.Column(db.String(255), nullable=False)  # To store the form name
+    file_data = db.Column(db.LargeBinary, nullable=False)  # Store the PDF file in binary
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)  # To track when the form was uploaded
+
+    def __init__(self, form_name, file_data):
+        self.form_name = form_name
+        self.file_data = file_data
 
 

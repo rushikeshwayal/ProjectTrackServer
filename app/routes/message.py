@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
 from app.models import db, Message
-
+from io import BytesIO
 message_bp = Blueprint('message', __name__)
+from flask import send_file
 
 # Route to send a message
 from flask import Blueprint, jsonify, request
@@ -95,26 +96,31 @@ def get_message(message_id):
         return jsonify({"error": str(e)}), 500
 
 
-# Route to download the attachment
 @message_bp.route('/chat/message/<int:message_id>/attachment', methods=['GET'])
 def download_attachment(message_id):
     try:
+        # Query the Message object using the message_id
         message = Message.query.get(message_id)
-        if not message or not message.attachment:
-            return jsonify({"error": "Attachment not found."}), 404
-            
-        
 
-        # Send the file with the correct MIME type and filename
-        return (
-            message.attachment,  # Binary content of the file
-            200,
-            {
-                "Content-Type": message.attachment_mime_type,  # Correct MIME type
-                "Content-Disposition": f"attachment; filename={message.attachment_name}",  # Correct filename
-            },
+        # Check if the message or the attachment exists
+        if not message or not message.attachment_data:
+            return jsonify({"error": "Attachment not found."}), 404
+
+        # The file data is stored in the `attachment_data` column
+        attachment_data = message.attachment_data
+        # We create a file-like object in memory using BytesIO
+        file_like_object = BytesIO(attachment_data)
+
+        # Send the file as an attachment with the correct MIME type and filename
+        return send_file(
+            file_like_object, 
+            as_attachment=True,
+            mimetype=message.attachment_mime_type,  # Correct MIME type
+            download_name=message.attachment_name  # Correct filename
         )
+
     except Exception as e:
+        # Return a generic error message if something goes wrong
         return jsonify({"error": str(e)}), 500
 
 

@@ -40,6 +40,9 @@ def register_blueprints(app):
     from app.routes.Project import project_bp
     from app.routes.ProjectCoordinator import projectcoordinator_bp
     from app.routes.message import message_bp
+    from app.routes.QuartelyExpenditure import quarterly_expenditure_bp
+    from app.routes.form import upload_bp
+
 
 
 
@@ -54,8 +57,13 @@ def register_blueprints(app):
     app.register_blueprint(project_bp, url_prefix='/api')
     app.register_blueprint(projectcoordinator_bp, url_prefix='/api')
     app.register_blueprint(message_bp, url_prefix='/api')
+    app.register_blueprint(quarterly_expenditure_bp,url_prefix='/api')
+    app.register_blueprint(upload_bp,url_prefix='/api')
+    
 
 
+
+    
     
 
 
