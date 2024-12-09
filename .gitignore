@@ -1,3 +1,4 @@
 aaenv/
 app/routes/credentials.json
 token.json
+token.pickle

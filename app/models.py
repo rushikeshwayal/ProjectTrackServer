@@ -65,17 +65,17 @@ class Investigator(db.Model):
     authority = db.Column(db.String(20), nullable=False)
     highest_qualification = db.Column(db.String(100), nullable=False)
 
-    # This will generate the investigatorUniqe_id after insert
-    @validates('investigatorUniqe_id')
-    def generate_investigatorUniqe_id(self, key, value):
-        # Leave this as it is to ensure the value is correctly set after insert
-        return value
-@event.listens_for(Investigator, 'after_insert')
-def generate_investigatorUniqe_id(mapper, connection, target):
-    # After the investigator record is inserted and we have an id, update investigatorUniqe_id
-    if not target.investigatorUniqe_id:  # If investigatorUniqe_id is not set yet
-        target.investigatorUniqe_id = f"investigator_{target.investigator_id}"
-        db.session.merge(target)  # Use merge to update the row
+#     # This will generate the investigatorUniqe_id after insert
+#     @validates('investigatorUniqe_id')
+#     def generate_investigatorUniqe_id(self, key, value):
+#         # Leave this as it is to ensure the value is correctly set after insert
+#         return value
+# @event.listens_for(Investigator, 'after_insert')
+# def generate_investigatorUniqe_id(mapper, connection, target):
+#     # After the investigator record is inserted and we have an id, update investigatorUniqe_id
+#     if not target.investigatorUniqe_id:  # If investigatorUniqe_id is not set yet
+#         target.investigatorUniqe_id = f"investigator_{target.investigator_id}"
+#         db.session.merge(target)  # Use merge to update the row
 
 
 class SubInvestigator(db.Model):
@@ -245,4 +245,18 @@ class ProjectReport(db.Model):
             "phase": self.phase,
             "report_doc": self.report_doc,
             "created_at": self.created_at.isoformat()
+        }
+    
+class FileStorage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    project_id = db.Column(db.Integer, nullable=False)
+    file_name = db.Column(db.String(255), nullable=False)
+    file_url = db.Column(db.String(255), nullable=False)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "project_id": self.project_id,
+            "file_name": self.file_name,
+            "file_url": self.file_url
         }

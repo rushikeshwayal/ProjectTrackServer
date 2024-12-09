@@ -4,7 +4,7 @@ from app.config import Config
 from dotenv import load_dotenv
 import os
 from flask_cors import CORS
-
+import base64
 load_dotenv()
 
 def create_app():
@@ -42,6 +42,8 @@ def register_blueprints(app):
     from app.routes.message import message_bp
     from app.routes.form import upload_bp
     from app.routes.projectReport import project_Report_bp
+    from app.routes.Allforms import file_bp
+    from app.routes.FundUtilization import fund_utilization_bp  # Register the fund_utilization blueprint
 
 
 
@@ -60,6 +62,9 @@ def register_blueprints(app):
     app.register_blueprint(message_bp, url_prefix='/api')
     app.register_blueprint(upload_bp, url_prefix='/api')
     app.register_blueprint(project_Report_bp, url_prefix='/api')
+    app.register_blueprint(file_bp, url_prefix='/api')
+    app.register_blueprint(fund_utilization_bp, url_prefix='/api')  # Register the fund_utilization blueprint
+    
 
 
 
