@@ -12,6 +12,8 @@ from datetime import datetime  # For default value
 #     password = db.Column(db.String(255))  # Store hashed passwords
 #     access = db.Column(db.String(50))  # Access level
 
+from sqlalchemy import Boolean
+
 class Admin(db.Model):
     __tablename__ = 'admin'
     
@@ -32,16 +34,19 @@ class Admin(db.Model):
     authority = Column(String(20), nullable=False)
     identification = Column(String(50), nullable=True)
     department = Column(String(50), nullable=True)
+    is_verified = Column(Boolean, default=False, nullable=False)  # New column
 
     @validates('adminUniqe_id')
     def generate_adminUnique_id(self, key, value):
         # Do not set adminUniqe_id directly through this validator.
         return value
+
 # Listen for the "before insert" event to generate adminUniqe_id dynamically
 @event.listens_for(Admin, 'before_insert')
 def generate_adminUnique_id(mapper, connection, target):
     if not target.adminUniqe_id:  # If the adminUnique_id is not already set
         target.adminUniqe_id = f"admin_{target.admin_id}"
+
 
 
 class Investigator(db.Model):
@@ -260,3 +265,17 @@ class FileStorage(db.Model):
             "file_name": self.file_name,
             "file_url": self.file_url
         }
+
+class BankDetails(db.Model):
+    _tablename_ = 'bank_details'
+
+    bank_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    investigator_id = db.Column(db.Integer, db.ForeignKey('investigator.investigator_id'), nullable=False)
+    bank_name = db.Column(db.String(255), nullable=False)
+    account_holder_name = db.Column(db.String(255), nullable=False)
+    account_number = db.Column(db.String(20), nullable=False, unique=True)
+    ifsc_code = db.Column(db.String(11), nullable=False)
+    branch_name = db.Column(db.String(255), nullable=False)
+    branch_address = db.Column(db.String(255), nullable=True)
+    email = db.Column(db.String(255), nullable=False)
+    phone_number = db.Column(db.String(15), nullable=False)
