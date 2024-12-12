@@ -44,6 +44,13 @@ def register_blueprints(app):
     from app.routes.projectReport import project_Report_bp
     from app.routes.Allforms import file_bp
     from app.routes.FundUtilization import fund_utilization_bp  # Register the fund_utilization blueprint
+    from app.routes.expenditure import expenditure_bp
+    from app.routes.form_i import form_i_bp
+    from app.routes.form_ii import form_ii_bp
+    from app.routes.formiii import form_iii_bp
+    from app.routes.form_iv import form_iv_bp
+    from app.routes.form_v import form_v_bp
+    from app.routes.form_vi import form_vi_bp
 
 
 
@@ -64,6 +71,12 @@ def register_blueprints(app):
     app.register_blueprint(project_Report_bp, url_prefix='/api')
     app.register_blueprint(file_bp, url_prefix='/api')
     app.register_blueprint(fund_utilization_bp, url_prefix='/api')  # Register the fund_utilization blueprint
+    app.register_blueprint(expenditure_bp,url_prefix = '/api')
+    app.register_blueprint(form_i_bp,url_prefix='/api')
+    app.register_blueprint(form_iii_bp,url_prefix='/api')
+    app.register_blueprint(form_iv_bp,url_prefix='/api')
+    app.register_blueprint(form_v_bp,url_prefix='/api')
+    app.register_blueprint(form_vi_bp,url_prefix='/api')
     
 
 

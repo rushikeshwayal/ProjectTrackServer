@@ -133,8 +133,9 @@ class ProjectStatus(db.Model):
     project_status_id = Column(Integer, primary_key=True, autoincrement=True)
     phase = Column(String(100), nullable=False)  # Name of the current project phase
     description = Column(Text, nullable=True)  # Detailed description of the project status
-    date_of_updation = Column(Date, nullable=False)  # Date when the status was last updated
-    time_of_updation = Column(Time, nullable=False)
+    start_date = Column(Date, nullable=False)  # Start date of the project phase
+    end_date = Column(Date, nullable=True)  # End date of the project phase
+    project_completion_status = Column(String(50), nullable=False, default="In Progress")  # Completion status of the project
     project_id = Column(Integer, ForeignKey('project_table.project_id'), nullable=False)  # FK from ProjectTable
 
 class ProjectCoordinator(db.Model):
@@ -168,7 +169,7 @@ class ProjectFund(db.Model):
     _tablename_ = 'project_fund'
 
     project_fund_id = Column(Integer, primary_key=True, autoincrement=True)  # Primary Key
-    fund_amount = Column(Float, nullable=False)  # Fund Amount
+    fund_amount = Column(Float, nullable=False)  # Fund Amount  
     fund_releasing_authority = Column(String(255), nullable=False)  # Fund Releasing Authority
     project_phase = Column(String(100), nullable=False)  # Project Phase
     fund_release_date = Column(Date, nullable=False)  # Fund Release Date
@@ -279,3 +280,272 @@ class BankDetails(db.Model):
     branch_address = db.Column(db.String(255), nullable=True)
     email = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(15), nullable=False)
+
+# Expenditure Model
+class Expenditure(db.Model):
+    __tablename__ = 'expenditure'
+
+    id = db.Column(db.Integer, primary_key=True)
+    project_id = db.Column(db.Integer, db.ForeignKey('project_table.project_id'), nullable=False)
+
+    land_building = db.Column(db.Float, nullable=False)
+    equipment = db.Column(db.Float, nullable=False)
+    totalCapital = db.Column(db.Float, nullable=False)
+    
+    salary = db.Column(db.Float, nullable=False)
+    consumables = db.Column(db.Float, nullable=False)
+    travel = db.Column(db.Float, nullable=False)
+    workshopSeminar = db.Column(db.Float, nullable=False)
+    totalRevenue = db.Column(db.Float, nullable=False)
+    
+    contingency = db.Column(db.Float, nullable=False)
+    institutionalOverhead = db.Column(db.Float, nullable=False)
+    applicableTaxes = db.Column(db.Float, nullable=False)
+    grandTotal = db.Column(db.Float, nullable=False)
+
+    implementingAgency = db.Column(db.Boolean, default=False)
+    subImplementingAgency1 = db.Column(db.Boolean, default=False)
+    subImplementingAgency2 = db.Column(db.Boolean, default=False)
+    subImplementingAgency3 = db.Column(db.Boolean, default=False)
+
+
+class FormIII(db.Model):
+    _tablename_ = 'form_iii'
+    id = Column(Integer, primary_key=True)
+    project_id = Column(Integer, ForeignKey('project_table.project_id'), nullable=False)
+    quarter_end_date = Column(Date, nullable=False)
+    land_building_cost = Column(Float, default=0.0)
+    capital_equipment_cost = Column(Float, default=0.0)
+    manpower_cost = Column(Float, default=0.0)
+    consumable_cost = Column(Float, default=0.0)
+    ta_da_cost = Column(Float, default=0.0)
+    contingencies_cost = Column(Float, default=0.0)
+    seminar_cost = Column(Float, default=0.0)
+    other_costs = Column(Float, default=0.0)
+    funds_advanced = Column(Float, default=0.0)
+    expenditure_incurred = Column(Float, default=0.0)
+    unspent_balance = Column(Float, default=0.0)
+
+
+class FormVI(db.Model):
+    _tablename_ = 'form_vi'
+    id = Column(Integer, primary_key=True)
+    project_id = Column(Integer, ForeignKey('project_table.project_id'), nullable=False)
+    title = Column(String, nullable=False)
+    start_date = Column(Date, nullable=False)
+    approved_completion_date = Column(Date, nullable=False)
+    actual_completion_date = Column(Date)
+    objectives = Column(String)
+    work_programme = Column(String)
+    work_done_details = Column(String)
+    objectives_fulfillment = Column(String)
+    scope_for_further_studies = Column(String)
+    conclusions = Column(String)
+    recommendations = Column(String)
+    industry_application_scope = Column(String)
+    associated_persons = Column(String)
+    final_expenditure_statement = Column(String)
+
+
+
+class FormVII(db.Model):
+    _tablename_ = 'form_vii'
+    id = Column(Integer, primary_key=True)
+    project_id = Column(Integer, ForeignKey('project_table.project_id'), nullable=False)
+    principal_agency = Column(String, nullable=False)
+    project_leader = Column(String, nullable=False)
+    start_date = Column(Date, nullable=False)
+    scheduled_completion_date = Column(Date, nullable=False)
+    approved_objectives = Column(String)
+    approved_work_programme = Column(String)
+    work_done_details = Column(String)
+    revised_schedule = Column(String)
+    extension_time = Column(String)
+    extension_reason = Column(String)
+    total_project_cost = Column(Float, default=0.0)
+    actual_expenditure = Column(Float, default=0.0)
+
+class FormI(db.Model):
+    _tablename_ = 'form_i'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    project_id = Column(Integer, ForeignKey('project_table.project_id'), nullable=False)  # Foreign key for project table
+    
+    # Basic Information
+    project_title = Column(String(255), nullable=False)
+    principal_agency_name = Column(String(255))
+    principal_agency_address = Column(Text)
+    project_leader = Column(String(255))
+    sub_agency_name = Column(String(255))
+    sub_agency_address = Column(Text)
+    co_investigator = Column(String(255))
+    
+    # Details
+    definition_of_issue = Column(Text)
+    objectives = Column(Text)
+    justification = Column(Text)
+    benefit_to_coal_industry = Column(Text)
+    work_plan = Column(Text)
+    methodology = Column(Text)
+    organization_of_work_elements = Column(Text)
+    time_schedule = Column(Text)  # You can also implement a JSON field for bar chart data
+    
+    # Cost Breakdown
+    land_building_cost = Column(Float, default=0.0)
+    equipment_cost = Column(Float, default=0.0)
+    salary_allowances = Column(Float, default=0.0)
+    consumables_cost = Column(Float, default=0.0)
+    travel_cost = Column(Float, default=0.0)
+    workshop_cost = Column(Float, default=0.0)
+    contingency_cost = Column(Float, default=0.0)
+    overheads = Column(Float, default=0.0)
+    taxes = Column(Float, default=0.0)
+    total_cost = Column(Float, default=0.0)
+    foreign_exchange_component = Column(String(255))  # Foreign currency details
+    exchange_rate = Column(Float, default=0.0)
+    
+    # Additional Fields
+    fund_phasing = Column(Text)
+    land_outlay = Column(Text)
+    equipment_outlay = Column(Text)
+    consumables_outlay = Column(Text)
+    cv_details = Column(Text)  # Combine all CV-related details as JSON or structured text
+    past_experience = Column(Text)
+    others = Column(Text)
+    
+    
+class FormII(db.Model):
+    _tablename_ = 'form_ii'
+
+    id = db.Column(db.Integer, primary_key=True)
+    project_id = db.Column(db.Integer, db.ForeignKey('project_table.project_id'), nullable=False)
+    project_code = db.Column(db.String(50), nullable=False)
+    company_name = db.Column(db.String(255), nullable=False)
+    year_or_period = db.Column(db.String(255), nullable=False)
+    total_approved_cost = db.Column(db.Float, nullable=False)
+    total_fund_received = db.Column(db.Float, nullable=False)
+    interest_earned = db.Column(db.Float, default=0.0)
+    expenditure_incurred = db.Column(db.Float, nullable=False)
+    balance_fund_available = db.Column(db.Float, nullable=False)
+    fund_provision = db.Column(db.Float, nullable=False)
+    fund_required = db.Column(db.Float, nullable=False)
+    land_building = db.Column(db.Float, default=0.0)
+    capital_equipment = db.Column(db.Float, default=0.0)
+    manpower = db.Column(db.Float, default=0.0)
+    consumables = db.Column(db.Float, default=0.0)
+    travel = db.Column(db.Float, default=0.0)
+    contingencies = db.Column(db.Float, default=0.0)
+    workshop_seminar = db.Column(db.Float, default=0.0)
+    associate_finance_officer = db.Column(db.String(255), nullable=False)
+    project_leader = db.Column(db.String(255), nullable=False)
+    signature_finance_officer = db.Column(db.String(255), nullable=False)
+    signature_project_leader = db.Column(db.String(255), nullable=False)
+
+    def as_dict(self):
+        return {column.name: getattr(self, column.name) for column in self._table_.columns}
+    
+   
+    
+ # SQLAlchemy Model for Form IV
+class FormIV(db.Model):
+    _tablename_ = 'form_iv'
+
+    id = db.Column(db.Integer, primary_key=True)
+    project_name = db.Column(db.String(255), nullable=False)
+    project_code = db.Column(db.String(50), nullable=False)
+    company_name = db.Column(db.String(255), nullable=False)
+    quarter_ending = db.Column(db.String(50), nullable=False)
+    equipment_name = db.Column(db.String(255), nullable=False)
+    supplier_name = db.Column(db.String(255), nullable=False)
+    no_of_units = db.Column(db.Integer, nullable=False)
+    unit_value = db.Column(db.Float, nullable=False)
+    total_value = db.Column(db.Float, nullable=False)
+    total_approved_cost = db.Column(db.Float, nullable=False)
+    progressive_expenditure = db.Column(db.Float, nullable=False)
+    associate_finance_officer = db.Column(db.String(255), nullable=False)
+    project_leader = db.Column(db.String(255), nullable=False)
+
+    def as_dict(self):
+        return {column.name: getattr(self, column.name) for column in self._table_.columns}
+    
+    
+# SQLAlchemy Model for Form V
+class FormV(db.Model):
+    _tablename_ = 'form_v'
+
+    id = db.Column(db.Integer, primary_key=True)
+    project_name = db.Column(db.String(255), nullable=False)
+    project_code = db.Column(db.String(50), nullable=False)
+    progress_for_quarter = db.Column(db.String(255), nullable=False)
+    principal_agency = db.Column(db.String(255), nullable=False)
+    sub_agency = db.Column(db.String(255), nullable=True)
+    project_leader = db.Column(db.String(255), nullable=False)
+    date_of_commencement = db.Column(db.Date, nullable=False)
+    approved_completion_date = db.Column(db.Date, nullable=False)
+    bar_chart_status = db.Column(db.Text, nullable=True)
+    work_done = db.Column(db.Text, nullable=True)
+    slippage_reasons = db.Column(db.Text, nullable=True)
+    corrective_actions = db.Column(db.Text, nullable=True)
+    work_expected_next_quarter = db.Column(db.Text, nullable=True)
+    quarterly_expenditure_statements = db.Column(db.Text, nullable=True)
+
+    def as_dict(self):
+        return {column.name: getattr(self, column.name) for column in self._table_.columns}
+    
+
+class FormVIII(db.Model):
+    _tablename_ = 'form_viii'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    project_id = Column(Integer, ForeignKey('project_table.project_id'), nullable=False)  # Foreign Key for Project Table
+    
+    # Project Details
+    project_name = Column(String(255), nullable=False)
+    project_code = Column(String(100), nullable=False)
+    
+    # Agency Details
+    principal_agency_name = Column(String(255))
+    sub_implementing_agency_name = Column(String(255))
+    
+    # Project Leader
+    project_leader = Column(String(255))
+    
+    # Dates
+    project_start_date = Column(Date)
+    scheduled_completion_date = Column(Date)
+    
+    # Approved Objectives
+    approved_objectives = Column(Text)
+    
+    # Approved Work Programme
+    approved_work_programme = Column(Text)
+    
+    # Work Progress
+    work_done_details = Column(Text)
+    
+    # Financial Information
+    total_approved_cost = Column(Float)
+    revised_cost = Column(Float)
+    justification_for_revision = Column(Text)
+    
+    # Time Schedule
+    revised_time_schedule = Column(Text)
+    
+    # Actual Expenditure (to be captured from Form III and IV)
+    actual_expenditure_till_last_quarter = Column(Float)
+
+    # Signature Details
+    associate_finance_officer_signature = Column(String(255))
+    project_leader_signature = Column(String(255))
+    
+    # Additional Fields
+    comments = Column(Text)
+
+# Helper method for serialization
+def model_as_dict(self):
+    return {column.name: getattr(self, column.name) for column in self._table_.columns}
+
+FormVIII.as_dict = model_as_dict
+
+
+
